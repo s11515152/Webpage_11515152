@@ -110,6 +110,15 @@
       color: var(--b);
     }
 
+    .menu-toggle {
+      display: none;
+      border: 0;
+      background: transparent;
+      color: var(--d);
+      font-size: 26px;
+      line-height: 1;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -606,15 +615,44 @@
         --wrap: min(calc(100% - 32px), 560px);
       }
 
+      .nav {
+        position: relative;
+      }
+
+      .menu-toggle {
+        display: block;
+        min-width: 44px;
+        min-height: 44px;
+      }
+
       .nav-links {
+        position: absolute;
+        top: 76px;
+        left: -16px;
+        right: -16px;
+        display: grid;
         gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 16px;
+        background: #eff7ff;
+        box-shadow: 0 12px 22px #06204d1a;
+        transition: max-height .25s ease, padding .25s ease;
+      }
+
+      .nav-links.open {
+        max-height: 280px;
+        padding-top: 10px;
+        padding-bottom: 16px;
       }
 
       .nav-links > a:not(.button) {
-        display: none;
+        display: block;
+        padding: 10px 0;
       }
 
       .nav-links .button {
+        margin-top: 7px;
         padding: 10px 15px;
         font-size: 13px;
       }
@@ -730,7 +768,8 @@
         <span class="brand-mark">B</span>
         <span>藍天咖啡</span>
       </a>
-      <div class="nav-links">
+      <button class="menu-toggle" type="button" aria-controls="navLinks" aria-expanded="false" aria-label="開啟導覽選單">☰</button>
+      <div class="nav-links" id="navLinks">
         <a href="#why">為何選擇我們</a>
         <a href="#plans">咖啡方案</a>
         <a href="#how">使用方式</a>
@@ -785,17 +824,17 @@
           <article class="benefit">
             <div class="number">01</div>
             <h3>為機器而生</h3>
-            <p>為全自動與義式咖啡機調整烘焙曲線，強調穩定萃取與油脂。</p>
+            <p>為全自動與義式咖啡機調整烘焙曲線，讓萃取穩定、油脂漂亮。</p>
           </article>
           <article class="benefit">
             <div class="number">02</div>
             <h3>親民，不將就</h3>
-            <p>提供平衡的日常咖啡豆，簡化早晨的選擇，好喝也不必複雜。</p>
+            <p>提供平衡順口的日常咖啡豆，簡化早晨的選擇，好喝也不必複雜。</p>
           </article>
           <article class="benefit">
             <div class="number">03</div>
             <h3>喝完再補貨</h3>
-            <p>定期配送降低補貨負擔，咖啡豆快用完時，新鮮補給剛好到家。</p>
+            <p>定期配送把握補貨節奏，咖啡豆快用完時，新鮮補給剛好到家。</p>
           </article>
         </div>
       </div>
@@ -816,7 +855,7 @@
             <ul>
               <li>250g 咖啡豆</li>
               <li>每月配送 1 次</li>
-              <li>中淺焙果香平衡</li>
+              <li>中淺焙，果香平衡</li>
             </ul>
             <button class="button choose" data-plan="晨光輕飲">選擇這個方案</button>
           </article>
@@ -829,7 +868,7 @@
             <ul>
               <li>500g 咖啡豆</li>
               <li>每月配送 1 次</li>
-              <li>中焙堅果可可</li>
+              <li>中焙，堅果可可調</li>
               <li>免運費</li>
             </ul>
             <button class="button choose" data-plan="藍天日常">選擇這個方案</button>
@@ -842,7 +881,7 @@
             <ul>
               <li>1kg 咖啡豆</li>
               <li>每月配送 2 次</li>
-              <li>深焙濃郁醇厚</li>
+              <li>深焙，濃郁醇厚</li>
               <li>免運費</li>
             </ul>
             <button class="button choose" data-plan="辦公室補給">選擇這個方案</button>
@@ -867,7 +906,7 @@
             </li>
             <li>
               <strong>放入機器，按下開始</strong>
-              <span>其餘由咖啡機完成，享受你的日常好咖啡。</span>
+              <span>接下來交給咖啡機，享受你的日常好咖啡。</span>
             </li>
           </ol>
         </div>
@@ -907,6 +946,27 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.querySelector('#navLinks');
+
+    function closeMenu() {
+      navLinks.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', '開啟導覽選單');
+      menuToggle.textContent = '☰';
+    }
+
+    menuToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      menuToggle.setAttribute('aria-expanded', String(isOpen));
+      menuToggle.setAttribute('aria-label', isOpen ? '關閉導覽選單' : '開啟導覽選單');
+      menuToggle.textContent = isOpen ? '×' : '☰';
+    });
+
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
     const toast = document.querySelector('.toast');
     let toastTimer;
     document.querySelectorAll('.choose').forEach(button => {
